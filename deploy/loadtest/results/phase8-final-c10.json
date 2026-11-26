@@ -1,0 +1,204 @@
+[
+  {
+    "scenario": "probes",
+    "duration_s": 30.0,
+    "concurrency": 10,
+    "total": {
+      "requests": 6388,
+      "rps": 212.9,
+      "p50_ms": 54.7,
+      "p95_ms": 122.0,
+      "p99_ms": 165.8,
+      "max_ms": 314.0,
+      "mean_ms": 47.0,
+      "error_rate": 0.0,
+      "rate_limited": 0,
+      "statuses": {
+        "200": 6388
+      }
+    },
+    "operations": {
+      "health": {
+        "requests": 3188,
+        "rps": 106.3,
+        "p50_ms": 7.8,
+        "p95_ms": 24.6,
+        "p99_ms": 37.5,
+        "max_ms": 105.1,
+        "mean_ms": 9.4,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 3188
+        }
+      },
+      "ready": {
+        "requests": 3200,
+        "rps": 106.7,
+        "p50_ms": 76.2,
+        "p95_ms": 140.8,
+        "p99_ms": 179.1,
+        "max_ms": 314.0,
+        "mean_ms": 84.4,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 3200
+        }
+      }
+    },
+    "resources": {
+      "samples": 9,
+      "api_cpu_pct": {
+        "max": 127.13,
+        "mean": 100.0
+      },
+      "pg_connections": {
+        "max": 10.0,
+        "mean": 8.8
+      },
+      "redis_connected_clients": {
+        "max": 12.0,
+        "mean": 12.0
+      },
+      "redis_instantaneous_ops_per_sec": {
+        "max": 610.0,
+        "mean": 505.1
+      },
+      "redis_used_memory_mb": {
+        "max": 1.56,
+        "mean": 1.5
+      },
+      "api_mem_last": "163.2MiB"
+    }
+  },
+  {
+    "scenario": "reads",
+    "duration_s": 30.1,
+    "concurrency": 10,
+    "total": {
+      "requests": 3559,
+      "rps": 118.2,
+      "p50_ms": 75.2,
+      "p95_ms": 171.2,
+      "p99_ms": 222.1,
+      "max_ms": 353.5,
+      "mean_ms": 84.4,
+      "error_rate": 0.0,
+      "rate_limited": 0,
+      "statuses": {
+        "200": 3559
+      }
+    },
+    "operations": {
+      "approvals.list": {
+        "requests": 565,
+        "rps": 18.8,
+        "p50_ms": 63.1,
+        "p95_ms": 118.0,
+        "p99_ms": 150.9,
+        "max_ms": 296.6,
+        "mean_ms": 70.2,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 565
+        }
+      },
+      "conversation.get": {
+        "requests": 611,
+        "rps": 20.3,
+        "p50_ms": 122.2,
+        "p95_ms": 208.9,
+        "p99_ms": 260.3,
+        "max_ms": 324.6,
+        "mean_ms": 130.1,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 611
+        }
+      },
+      "conversation.history": {
+        "requests": 614,
+        "rps": 20.4,
+        "p50_ms": 120.0,
+        "p95_ms": 202.5,
+        "p99_ms": 260.6,
+        "max_ms": 353.5,
+        "mean_ms": 129.1,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 614
+        }
+      },
+      "conversations.list": {
+        "requests": 578,
+        "rps": 19.2,
+        "p50_ms": 61.7,
+        "p95_ms": 133.7,
+        "p99_ms": 184.2,
+        "max_ms": 246.8,
+        "mean_ms": 72.0,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 578
+        }
+      },
+      "me": {
+        "requests": 580,
+        "rps": 19.3,
+        "p50_ms": 22.1,
+        "p95_ms": 55.0,
+        "p99_ms": 75.1,
+        "max_ms": 129.7,
+        "mean_ms": 26.9,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 580
+        }
+      },
+      "memory.facts": {
+        "requests": 611,
+        "rps": 20.3,
+        "p50_ms": 65.1,
+        "p95_ms": 132.6,
+        "p99_ms": 173.3,
+        "max_ms": 290.7,
+        "mean_ms": 73.2,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "statuses": {
+          "200": 611
+        }
+      }
+    },
+    "resources": {
+      "samples": 9,
+      "api_cpu_pct": {
+        "max": 97.39,
+        "mean": 96.8
+      },
+      "pg_connections": {
+        "max": 11.0,
+        "mean": 9.9
+      },
+      "redis_connected_clients": {
+        "max": 12.0,
+        "mean": 12.0
+      },
+      "redis_instantaneous_ops_per_sec": {
+        "max": 409.0,
+        "mean": 345.2
+      },
+      "redis_used_memory_mb": {
+        "max": 1.56,
+        "mean": 1.5
+      },
+      "api_mem_last": "168.8MiB"
+    }
+  }
+]

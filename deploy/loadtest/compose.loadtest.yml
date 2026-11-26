@@ -1,0 +1,61 @@
+# LOAD-TEST overlay (Phase 8). Local measurement only; never a deployment.
+#
+#   docker compose --profile idp-test up -d keycloak
+#   docker compose -f docker-compose.yml -f deploy/loadtest/compose.loadtest.yml \
+#       --profile app --profile gateway --profile loadtest up -d
+#   .venv/Scripts/python deploy/loadtest/run_load.py ...
+#
+# Differences from the plain `app` profile, all deliberate:
+#   * the API and the migrate job use the disposable `agentic_test` database (integration
+#     tests reset it freely), never the `agentic` development database;
+#   * the LLM is a stub (llm_stub.py) behind LLM_ANTHROPIC_BASE_URL: no credential, no cost,
+#     platform latency only;
+#   * authentication is the reference Keycloak (real RS256 tokens, OIDC adapter unchanged);
+#   * rate limits are raised (LOADTEST_* variables) so the measurement is not the limiter.
+#     The default limits are verified separately (PROJECT_STATUS § 3g).
+# The postgres and redis services are not changed by this file.
+services:
+  llm-stub:
+    profiles: ["loadtest"]
+    image: agentic-platform:local
+    command: ["python", "/stub/llm_stub.py"]
+    environment:
+      STUB_LATENCY_MS: ${LOADTEST_LLM_LATENCY_MS:-500}
+    volumes:
+      - ./deploy/loadtest:/stub:ro
+    healthcheck:
+      disable: true
+
+  migrate:
+    environment:
+      DATABASE_MIGRATION_URL: postgresql://agentic_owner:${POSTGRES_OWNER_PASSWORD:-agentic_owner_dev}@postgres:5432/agentic_test
+
+  api:
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql://agentic_app:${POSTGRES_APP_PASSWORD:-agentic_app_dev}@postgres:5432/agentic_test
+      DATABASE_POOL_SIZE: ${LOADTEST_DB_POOL_SIZE:-5}
+      DATABASE_MAX_OVERFLOW: ${LOADTEST_DB_MAX_OVERFLOW:-5}
+      DATABASE_POOL_TIMEOUT_SECONDS: ${LOADTEST_DB_POOL_TIMEOUT_SECONDS:-10}
+      REDIS_KEY_PREFIX: agentic-loadtest
+      LLM_ANTHROPIC_BASE_URL: http://llm-stub:8090
+      ANTHROPIC_API_KEY: loadtest-stub-key-not-real
+      LLM_MAX_RETRIES: "0"
+      AUTH_PROVIDER: oidc
+      AUTH_OIDC_ISSUER: http://localhost:${KEYCLOAK_PORT:-8080}/realms/agentic-verify
+      AUTH_OIDC_JWKS_URL: http://keycloak:8080/realms/agentic-verify/protocol/openid-connect/certs
+      AUTH_OIDC_AUDIENCE: agentic-api
+      AUTH_OIDC_ROLE_MAP_JSON: '{"member": ["member"], "kc-auditors": ["auditor"], "kc-approvers": ["approver"]}'
+      AUTH_OIDC_MAX_TOKEN_LIFETIME_SECONDS: "900"
+      API_FORWARDED_ALLOW_IPS: ${API_FORWARDED_ALLOW_IPS:-172.16.0.0/12}
+      RATE_LIMIT_ENABLED: "true"
+      RATE_LIMIT_TURNS_PER_WINDOW: ${LOADTEST_TURNS_PER_WINDOW:-20}
+      RATE_LIMIT_READS_PER_WINDOW: ${LOADTEST_READS_PER_WINDOW:-600}
+    depends_on:
+      llm-stub:
+        condition: service_started
+
+  maintenance:
+    environment:
+      DATABASE_URL: postgresql://agentic_app:${POSTGRES_APP_PASSWORD:-agentic_app_dev}@postgres:5432/agentic_test
+      REDIS_KEY_PREFIX: agentic-loadtest

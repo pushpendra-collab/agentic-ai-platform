@@ -1,0 +1,27 @@
+# InvenLogic TEST replica for the ERP integration tests and local runs (README.md here).
+# It mirrors the real ERP's structure (Schema Atlas, 2026-10-29) with TEST data only.
+# It is NOT the company ERP and must never be pointed at by production settings.
+#
+#   docker compose -f docker/erp-test/compose.yml up -d
+#   docker compose -f docker/erp-test/compose.yml down -v      # drop it (data is TEST only)
+name: agentic-erp-test
+
+services:
+  erp-test-postgres:
+    image: postgres:18
+    container_name: agentic-erp-test
+    environment:
+      POSTGRES_USER: erp_test_admin
+      POSTGRES_PASSWORD: ${ERP_TEST_ADMIN_PASSWORD:-erp_test_admin_dev}
+      POSTGRES_DB: postgres
+      ERP_READER_PASSWORD: ${ERP_TEST_READER_PASSWORD:-erp_reader_dev}
+    ports:
+      - "127.0.0.1:${ERP_TEST_PORT:-5434}:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - ./sql:/erp-sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp_test_admin -d inventory_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 30

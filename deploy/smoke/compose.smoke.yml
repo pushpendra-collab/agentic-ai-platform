@@ -1,0 +1,200 @@
+# DEPLOYMENT SMOKE TEST stack (Phase 15). Local verification only; never a deployment.
+#
+#   .venv/Scripts/python deploy/smoke/run_smoke.py      # builds, starts, checks, tears down
+#
+# A self-contained compose project (`agentic-smoke`) with its OWN throw-away PostgreSQL 16
+# (+ pgvector) and Redis 7: data lives in tmpfs and disappears with the containers, nothing
+# is published except the API on 127.0.0.1. It never uses the development stack's
+# `agentic-postgres` / `agentic-redis`; its only ERP setting is the unreachable
+# `erp.invalid` placeholder (no contract, so nothing is ever sent to an ERP).
+#
+# Production-like where it matters:
+#   * the release image (agentic-platform:smoke) in its three roles: migrate (one-shot,
+#     schema-owner role), api, maintenance worker (runtime role only);
+#   * secrets delivered as files under APP_SECRETS_DIR=/run/secrets (generated per run by
+#     run_smoke.py into SMOKE_SECRETS_DIR, never committed);
+#   * non-root, read-only root filesystem, no Linux capabilities, no-new-privileges, an
+#     init process as PID 1, memory/CPU/PID limits, Redis with a password;
+#   * rate limits on, Agent DB at the migration head, readiness gating, JSON logs.
+# Deliberately NOT production (each is checked separately by run_smoke.py):
+#   * APP_ENV=development, because the ERP adapter runs without a contract (it answers
+#     RULE_NOT_VERIFIED and never connects) and development tokens are refused in
+#     production. The production gate is exercised with `--check-config` and a
+#     refused start instead;
+#   * the LLM is deploy/smoke/llm_stub.py (no credential, no network to a provider);
+#   * no TLS gateway (deploy/gateway is verified by the Phase 8 tests).
+#
+# The resource limits below are smoke-test bounds, NOT capacity or sizing figures.
+
+x-hardening: &hardening
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m
+  cap_drop: ["ALL"]
+  security_opt: ["no-new-privileges:true"]
+  init: true
+
+x-app-env: &app-env
+  APP_ENV: development
+  APP_SECRETS_DIR: /run/secrets
+  LOG_LEVEL: INFO
+  LOG_FORMAT: json
+  REDIS_KEY_PREFIX: agentic-smoke
+  LLM_ANTHROPIC_BASE_URL: http://llm-stub:8090
+  LLM_MAX_RETRIES: "0"
+  LLM_TIMEOUT_SECONDS: "150"
+  AUTH_PROVIDER: dev_token
+  AUTH_ALLOW_LOCAL_IDENTITY: "false"
+  # TEST role for business reads; "member" keeps the built-in permissions.
+  AUTH_ROLE_CATALOG_JSON: '{"member": ["conversation.read", "conversation.write", "conversation.delete", "memory.read", "memory.write", "memory.delete", "tool.execute", "approval.request"], "sales_viewer": ["business.customer.read", "business.sales.read"]}'
+  # The read-only ERP boundary without a contract: no reader, nothing is ever sent to
+  # the (unreachable) ERP; business questions answer UNAVAILABLE / RULE_NOT_VERIFIED.
+  ERP_ADAPTER: postgres
+  ERP_DATABASE_URL: postgresql://reader:x@erp.invalid:5432/erp
+  ERP_EXPECTED_DATABASE: erp
+  ERP_BUSINESS_TIMEZONE: UTC
+  MEMORY_ENABLED: "true"
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_READS_PER_WINDOW: "60"
+  RATE_LIMIT_TURNS_PER_WINDOW: "60"
+  API_RUN_MAINTENANCE: "false"
+  API_MAX_CONCURRENT_TURNS: "2"
+  API_GRACEFUL_SHUTDOWN_SECONDS: ${SMOKE_GRACEFUL_SECONDS:-5}
+  API_SHUTDOWN_CLEANUP_SECONDS: "5"
+  MAINTENANCE_INTERVAL_SECONDS: "30"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16-trixie
+    environment:
+      POSTGRES_DB: agentic
+      POSTGRES_USER: agentic_owner
+      POSTGRES_PASSWORD: ${SMOKE_PG_OWNER_PASSWORD:?run through run_smoke.py}
+      APP_DB_USER: agentic_app
+      APP_DB_PASSWORD: ${SMOKE_PG_APP_PASSWORD:?run through run_smoke.py}
+      TEST_DB_NAME: agentic_smoke_scratch
+    tmpfs:
+      - /var/lib/postgresql/data:size=512m
+    volumes:
+      - ../../docker/postgres/init:/docker-entrypoint-initdb.d:ro
+      - ../backup:/backup:ro
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentic_owner -d agentic"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\" --save '' --appendonly no --maxmemory 64mb --maxmemory-policy noeviction"]
+    environment:
+      REDIS_PASSWORD: ${SMOKE_REDIS_PASSWORD:?run through run_smoke.py}
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep PONG"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  llm-stub:
+    image: agentic-platform:smoke
+    <<: *hardening
+    command: ["python", "/stub/llm_stub.py"]
+    volumes:
+      - ./llm_stub.py:/stub/llm_stub.py:ro
+    networks: [backend]
+    healthcheck:
+      disable: true
+
+  migrate:
+    image: agentic-platform:smoke
+    <<: *hardening
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+    environment:
+      APP_ENV: development
+      APP_SECRETS_DIR: /run/secrets
+    secrets:
+      - source: database_migration_url
+        target: DATABASE_MIGRATION_URL
+    networks: [backend]
+    healthcheck:
+      disable: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    image: agentic-platform:smoke
+    <<: *hardening
+    restart: "no"  # the smoke test stops and starts it explicitly
+    stop_grace_period: 30s
+    environment:
+      <<: *app-env
+      API_HOST: 0.0.0.0
+    secrets:
+      - source: database_url
+        target: DATABASE_URL
+      - source: redis_url
+        target: REDIS_URL
+      - source: auth_token_secret
+        target: AUTH_TOKEN_SECRET
+      - source: anthropic_api_key
+        target: ANTHROPIC_API_KEY
+    ports:
+      - "127.0.0.1:${SMOKE_API_PORT:-18000}:8000"
+    networks: [backend, edge]
+    mem_limit: 768m
+    cpus: 2
+    pids_limit: 256
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      llm-stub:
+        condition: service_started
+
+  maintenance:
+    image: agentic-platform:smoke
+    <<: *hardening
+    command: ["python", "-m", "agentic_platform.maintenance", "--loop"]
+    restart: "no"
+    stop_grace_period: 60s
+    environment: *app-env
+    secrets:
+      - source: database_url
+        target: DATABASE_URL
+      - source: redis_url
+        target: REDIS_URL
+    networks: [backend]
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+secrets:
+  database_url:
+    file: ${SMOKE_SECRETS_DIR:?run through run_smoke.py}/DATABASE_URL
+  database_migration_url:
+    file: ${SMOKE_SECRETS_DIR}/DATABASE_MIGRATION_URL
+  redis_url:
+    file: ${SMOKE_SECRETS_DIR}/REDIS_URL
+  auth_token_secret:
+    file: ${SMOKE_SECRETS_DIR}/AUTH_TOKEN_SECRET
+  anthropic_api_key:
+    file: ${SMOKE_SECRETS_DIR}/ANTHROPIC_API_KEY
+
+networks:
+  # No route out: PostgreSQL, Redis, the stub and the worker are reachable only here.
+  backend:
+    internal: true
+  # The API's published port only.
+  edge: {}

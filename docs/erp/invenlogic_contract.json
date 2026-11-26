@@ -1,0 +1,1511 @@
+{
+  "contract_version": "invenlogic-1",
+  "status": "DRAFT",
+  "reader_set": "invenlogic_v1",
+  "currency": "INR",
+  "tenant_isolation": {
+    "mechanism": "rls_session_setting",
+    "setting": "invenlogic.company_id",
+    "policy_function": "invenlogic_company_id",
+    "tenant_value": "platform_tenant_id",
+    "confirmation": {
+      "confirmed_by": "Company owner (instruction in the project chat)",
+      "confirmed_on": "2026-10-30",
+      "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+    }
+  },
+  "warehouse_isolation": {
+    "mechanism": "column",
+    "column": "warehouse_id",
+    "ref_column": "id",
+    "out_of_scope": "not_found",
+    "confirmation": {
+      "confirmed_by": "Company owner (instruction in the project chat)",
+      "confirmed_on": "2026-10-30",
+      "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+    }
+  },
+  "time": {
+    "erp_timestamp_storage": "timestamptz",
+    "business_timezone": "Asia/Kolkata",
+    "day_boundary": "midnight_local",
+    "week_start": "monday",
+    "month": "calendar",
+    "confirmation": {
+      "confirmed_by": "Company owner (instruction in the project chat)",
+      "confirmed_on": "2026-10-30",
+      "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+    }
+  },
+  "rules": {
+    "business_ownership": {
+      "definition": "A document belongs to the company in its company_id. The platform tenant id is the InvenLogic company id.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "customer_identification": {
+      "definition": "A customer is identified by customer.id; a name matches active customers by case-insensitive substring of ledger_name, display_name or short_name.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "sales_calculation": {
+      "definition": "Sales of a day = sum of sales_invoice.grand_total (GST inclusive) of POSTED invoices with that invoice_date. DRAFT, DISCARDED and CANCELLED are excluded. Credit notes and returns are NOT deducted (gross sales).",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "outstanding_balance": {
+      "definition": "Invoice paid = sum of receivable_allocation.amount not undone; balance = grand_total - paid; open while above zero. Opening bills likewise. Customer outstanding = open invoice and opening-bill balances - unallocated_amount of POSTED receipts (advances) - unapplied_amount of POSTED credit notes.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "stock_calculation": {
+      "definition": "Stock = stock_balance.quantity_on_hand per warehouse (all batches, expired included, not_for_sale warehouses included). Low stock = an active reorder_rule whose warehouse holds at most min_qty (base unit).",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "date_period": {
+      "definition": "Dates are business dates in Asia/Kolkata; weeks start Monday; months are calendar months; years are Indian financial years (1 April - 31 March).",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "invoice_status_semantics": {
+      "definition": "POSTED = issued and counted; CANCELLED = void, never counted; DRAFT and DISCARDED = never posted, never counted. The same values apply to opening bills, receipts and credit notes. Any other value fails the read.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "overdue_by_due_date": {
+      "definition": "An open bill is overdue when due_date is before today.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "sales_period_is_sum_of_days": {
+      "definition": "Period sales = the sum of its days' sales.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "week_starts_monday": {
+      "definition": "Weeks start on Monday.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "year_is_financial_year_april": {
+      "definition": "A year is the financial year 1 April - 31 March.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "same_period_last_year_by_date": {
+      "definition": "Last year's comparison = the same dates one year earlier.",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      }
+    },
+    "customer_count_definition": {
+      "definition": "Customers = customer rows of the company that are not cash-sale placeholders (cash_sale), counted active and inactive. Customers billed in a period = different customer_id of POSTED sales_invoice rows dated in it with counter_sale false; counter-sale invoices are counted as bills only (they name no customer). Login users are not customers and are never counted.",
+      "confirmation": {
+        "confirmed_by": "Company owner (approval in the project chat)",
+        "confirmed_on": "2026-11-25",
+        "reference": "Owner approval 2026-11-25: customer count and customers billed per period (plan items B, C)"
+      }
+    }
+  },
+  "invoice_statuses": {
+    "open": [
+      "POSTED"
+    ],
+    "cancelled": [
+      "CANCELLED"
+    ],
+    "draft": [
+      "DRAFT",
+      "DISCARDED"
+    ]
+  },
+  "permission_expectations": {
+    "platform_permissions_authoritative": true,
+    "notes": "Business permissions are granted per platform role (AUTH_ROLE_CATALOG_JSON).",
+    "confirmation": {
+      "confirmed_by": "Company owner (instruction in the project chat)",
+      "confirmed_on": "2026-10-30",
+      "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+    }
+  },
+  "capabilities": {
+    "customer_outstanding": {
+      "capability": "customer_outstanding",
+      "permission": "business.customer.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "customer",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_invoice",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_opening_bill",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_receipt",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_credit_note",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "receivable_allocation",
+          "kind": "table",
+          "database": "sales"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.customer",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.customer",
+          "column": "ledger_name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.customer",
+          "column": "display_name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.customer",
+          "column": "short_name",
+          "data_type": "character varying(255)",
+          "role": "match"
+        },
+        {
+          "relation": "public.customer",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.customer",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "customer_ref"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "grand_total",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "amount"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "amount"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "unallocated_amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "amount"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "unapplied_amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "amount"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "amount"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "sales_invoice_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "sales_opening_bill_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "undone_at",
+          "data_type": "timestamp with time zone",
+          "role": "status"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "invoice_date",
+          "data_type": "date",
+          "role": "date"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "joins": [
+        "sales_invoice.customer_id = customer.id (cross-database, plain id)",
+        "receivable_allocation.sales_invoice_id = sales_invoice.id",
+        "receivable_allocation.sales_opening_bill_id = sales_opening_bill.id"
+      ],
+      "date_filter": "none: all posted documents up to now",
+      "rules": [
+        "outstanding_balance",
+        "customer_identification",
+        "invoice_status_semantics"
+      ],
+      "warehouse_boundary": "none: customer balances are company-wide (Q29 option a)",
+      "ambiguity_behavior": "case-insensitive substring of ledger_name, display_name or short_name among active customers; several matches -> AMBIGUOUS",
+      "not_found_behavior": "no active customer matches, or the id is another company's -> NOT_FOUND",
+      "status_filter": [
+        "POSTED"
+      ]
+    },
+    "customer_open_invoices": {
+      "capability": "customer_open_invoices",
+      "permission": "business.customer.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "customer",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_invoice",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_opening_bill",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_receipt",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_credit_note",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "receivable_allocation",
+          "kind": "table",
+          "database": "sales"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.customer",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.customer",
+          "column": "ledger_name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.customer",
+          "column": "display_name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.customer",
+          "column": "short_name",
+          "data_type": "character varying(255)",
+          "role": "match"
+        },
+        {
+          "relation": "public.customer",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.customer",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "invoice_number",
+          "data_type": "character varying(16)",
+          "role": "field",
+          "record_field": "number"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "customer_ref"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "grand_total",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "total"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "due_date",
+          "data_type": "date",
+          "role": "field",
+          "record_field": "due_on"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "bill_number",
+          "data_type": "character varying(40)",
+          "role": "field",
+          "record_field": "number"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "total"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "bill_date",
+          "data_type": "date",
+          "role": "field",
+          "record_field": "issued_on"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "due_date",
+          "data_type": "date",
+          "role": "field",
+          "record_field": "due_on"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "amount",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "paid"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "sales_invoice_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "sales_opening_bill_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "undone_at",
+          "data_type": "timestamp with time zone",
+          "role": "status"
+        },
+        {
+          "relation": "public.receivable_allocation",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "invoice_date",
+          "data_type": "date",
+          "role": "field",
+          "record_field": "issued_on"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "joins": [
+        "sales_invoice.customer_id = customer.id (cross-database, plain id)",
+        "receivable_allocation.sales_invoice_id = sales_invoice.id"
+      ],
+      "date_filter": "none: open = posted with grand_total minus live allocations above zero",
+      "rules": [
+        "outstanding_balance",
+        "invoice_status_semantics",
+        "customer_identification"
+      ],
+      "warehouse_boundary": "none: customer balances are company-wide (Q29 option a)",
+      "ambiguity_behavior": "case-insensitive substring of ledger_name, display_name or short_name among active customers; several matches -> AMBIGUOUS",
+      "not_found_behavior": "no active customer matches, or the id is another company's -> NOT_FOUND",
+      "status_filter": [
+        "POSTED"
+      ]
+    },
+    "daily_sales": {
+      "capability": "daily_sales",
+      "permission": "business.sales.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "sales_invoice",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_opening_bill",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_receipt",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_credit_note",
+          "kind": "table",
+          "database": "sales"
+        },
+        {
+          "schema_name": "public",
+          "name": "receivable_allocation",
+          "kind": "table",
+          "database": "sales"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.sales_invoice",
+          "column": "invoice_date",
+          "data_type": "date",
+          "role": "field",
+          "record_field": "business_date"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "grand_total",
+          "data_type": "numeric(19,2)",
+          "role": "field",
+          "record_field": "total"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_opening_bill",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_receipt",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.sales_credit_note",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "warehouse_boundary": "none: sales are company-wide (Q29 option a)",
+      "status_filter": [
+        "POSTED"
+      ],
+      "date_filter": "invoice_date in [start, end)",
+      "ambiguity_behavior": "none (no entity to resolve)",
+      "not_found_behavior": "no posted invoice on the day -> NOT_FOUND",
+      "rules": [
+        "sales_calculation",
+        "date_period",
+        "invoice_status_semantics"
+      ]
+    },
+    "product_stock": {
+      "capability": "product_stock",
+      "permission": "business.inventory.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "product",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "uom",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "warehouse",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "stock_balance",
+          "kind": "table",
+          "database": "inventory"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.product",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.product",
+          "column": "name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.product",
+          "column": "sku",
+          "data_type": "character varying(255)",
+          "role": "match"
+        },
+        {
+          "relation": "public.product",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.product",
+          "column": "uom_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.product",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.uom",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.uom",
+          "column": "code",
+          "data_type": "character varying(50)",
+          "role": "field",
+          "record_field": "unit"
+        },
+        {
+          "relation": "public.uom",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "name",
+          "data_type": "character varying(100)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "code",
+          "data_type": "character varying(20)",
+          "role": "match"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "product_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "product_ref"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "warehouse_id",
+          "data_type": "bigint",
+          "role": "warehouse"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "quantity_on_hand",
+          "data_type": "numeric(18,3)",
+          "role": "field",
+          "record_field": "quantity"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "rules": [
+        "stock_calculation"
+      ],
+      "warehouse_boundary": "stock_balance.warehouse_id = warehouse.id; outside the caller's scope -> hidden (NOT_FOUND)",
+      "date_filter": "none: current balance",
+      "ambiguity_behavior": "case-insensitive substring of name, or sku / warehouse code; several matches -> AMBIGUOUS",
+      "not_found_behavior": "no active product / warehouse matches -> NOT_FOUND",
+      "joins": [
+        "stock_balance.product_id = product.id (cross-database, plain id)",
+        "stock_balance.warehouse_id = warehouse.id (cross-database, plain id)",
+        "product.uom_id = uom.id"
+      ]
+    },
+    "warehouse_stock": {
+      "capability": "warehouse_stock",
+      "permission": "business.inventory.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "product",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "uom",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "warehouse",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "stock_balance",
+          "kind": "table",
+          "database": "inventory"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.product",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.product",
+          "column": "name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.product",
+          "column": "sku",
+          "data_type": "character varying(255)",
+          "role": "match"
+        },
+        {
+          "relation": "public.product",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.product",
+          "column": "uom_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.product",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.uom",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.uom",
+          "column": "code",
+          "data_type": "character varying(50)",
+          "role": "field",
+          "record_field": "unit"
+        },
+        {
+          "relation": "public.uom",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "name",
+          "data_type": "character varying(100)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "code",
+          "data_type": "character varying(20)",
+          "role": "match"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "product_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "product_ref"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "warehouse_id",
+          "data_type": "bigint",
+          "role": "warehouse"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "quantity_on_hand",
+          "data_type": "numeric(18,3)",
+          "role": "field",
+          "record_field": "quantity"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "rules": [
+        "stock_calculation"
+      ],
+      "warehouse_boundary": "stock_balance.warehouse_id = warehouse.id; outside the caller's scope -> hidden (NOT_FOUND)",
+      "date_filter": "none: current balance",
+      "ambiguity_behavior": "case-insensitive substring of name, or sku / warehouse code; several matches -> AMBIGUOUS",
+      "not_found_behavior": "no active product / warehouse matches -> NOT_FOUND",
+      "joins": [
+        "stock_balance.product_id = product.id (cross-database, plain id)",
+        "stock_balance.warehouse_id = warehouse.id (cross-database, plain id)",
+        "product.uom_id = uom.id"
+      ]
+    },
+    "low_stock_products": {
+      "capability": "low_stock_products",
+      "permission": "business.inventory.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "product",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "uom",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "warehouse",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "stock_balance",
+          "kind": "table",
+          "database": "inventory"
+        },
+        {
+          "schema_name": "public",
+          "name": "reorder_rule",
+          "kind": "table",
+          "database": "inventory"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.product",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.product",
+          "column": "name",
+          "data_type": "character varying(255)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.product",
+          "column": "sku",
+          "data_type": "character varying(255)",
+          "role": "match"
+        },
+        {
+          "relation": "public.product",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.product",
+          "column": "uom_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.product",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.uom",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.uom",
+          "column": "code",
+          "data_type": "character varying(50)",
+          "role": "field",
+          "record_field": "unit"
+        },
+        {
+          "relation": "public.uom",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "ref"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "name",
+          "data_type": "character varying(100)",
+          "role": "field",
+          "record_field": "display_name"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "code",
+          "data_type": "character varying(20)",
+          "role": "match"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.warehouse",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "product_id",
+          "data_type": "bigint",
+          "role": "join"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "warehouse_id",
+          "data_type": "bigint",
+          "role": "warehouse"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "quantity_on_hand",
+          "data_type": "numeric(18,3)",
+          "role": "field",
+          "record_field": "quantity"
+        },
+        {
+          "relation": "public.stock_balance",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.reorder_rule",
+          "column": "product_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "product_ref"
+        },
+        {
+          "relation": "public.reorder_rule",
+          "column": "warehouse_id",
+          "data_type": "bigint",
+          "role": "warehouse"
+        },
+        {
+          "relation": "public.reorder_rule",
+          "column": "min_qty",
+          "data_type": "numeric(19,3)",
+          "role": "field",
+          "record_field": "threshold"
+        },
+        {
+          "relation": "public.reorder_rule",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.reorder_rule",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "timezone_behavior": "invoice_date / bill_date are dates in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "display name falls back to ledger_name; a row without its master-data name makes the answer MALFORMED_RESPONSE",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (instruction in the project chat)",
+        "confirmed_on": "2026-10-30",
+        "reference": "Owner instruction 2026-10-30: adopt the proposed defaults; accountant to re-confirm"
+      },
+      "rules": [
+        "stock_calculation"
+      ],
+      "warehouse_boundary": "stock_balance.warehouse_id = warehouse.id; outside the caller's scope -> hidden (NOT_FOUND)",
+      "date_filter": "none: current balance",
+      "ambiguity_behavior": "case-insensitive substring of name, or sku / warehouse code; several matches -> AMBIGUOUS",
+      "not_found_behavior": "no active product / warehouse matches -> NOT_FOUND",
+      "joins": [
+        "stock_balance.product_id = product.id (cross-database, plain id)",
+        "stock_balance.warehouse_id = warehouse.id (cross-database, plain id)",
+        "product.uom_id = uom.id"
+      ]
+    },
+    "customer_count": {
+      "capability": "customer_count",
+      "permission": "business.customer.read",
+      "sources": [
+        {
+          "schema_name": "public",
+          "name": "customer",
+          "kind": "table",
+          "database": "master_data"
+        },
+        {
+          "schema_name": "public",
+          "name": "sales_invoice",
+          "kind": "table",
+          "database": "sales"
+        }
+      ],
+      "columns": [
+        {
+          "relation": "public.customer",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "active_count"
+        },
+        {
+          "relation": "public.customer",
+          "column": "active",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.customer",
+          "column": "cash_sale",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.customer",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "invoice_count"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "customer_id",
+          "data_type": "bigint",
+          "role": "field",
+          "record_field": "customer_count"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "counter_sale",
+          "data_type": "boolean",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "status",
+          "data_type": "character varying(20)",
+          "role": "status"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "invoice_date",
+          "data_type": "date",
+          "role": "date"
+        },
+        {
+          "relation": "public.sales_invoice",
+          "column": "company_id",
+          "data_type": "bigint",
+          "role": "tenant"
+        }
+      ],
+      "joins": [],
+      "tenant_boundary": "RLS forced on every table (company_id = invenlogic_company_id()); every statement also filters company_id with the principal's tenant",
+      "warehouse_boundary": "none: customer counts are company-wide (Q29 option a)",
+      "status_filter": [
+        "POSTED"
+      ],
+      "date_filter": "customers: none; customers billed: invoice_date in [start, end)",
+      "timezone_behavior": "invoice_date is a date in the business time zone Asia/Kolkata; no conversion",
+      "null_behavior": "no customer or no invoice in the range -> a count of zero (counts never come from names)",
+      "ambiguity_behavior": "none (no entity to resolve)",
+      "not_found_behavior": "none: zero is a valid count",
+      "unavailable_behavior": "connection refused or timed out -> UNAVAILABLE (retryable once)",
+      "rules": [
+        "business_ownership",
+        "customer_identification",
+        "sales_calculation",
+        "date_period",
+        "invoice_status_semantics",
+        "customer_count_definition"
+      ],
+      "status": "DRAFT",
+      "confirmation": {
+        "confirmed_by": "Company owner (approval in the project chat)",
+        "confirmed_on": "2026-11-25",
+        "reference": "Owner approval 2026-11-25: customer count and customers billed per period (plan items B, C)"
+      }
+    }
+  }
+}

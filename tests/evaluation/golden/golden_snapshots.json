@@ -1,0 +1,1578 @@
+{
+  "business_ambiguous_customer": {
+    "business": [
+      [
+        "customer_open_invoices",
+        "AMBIGUOUS",
+        "SEVERAL_MATCHES",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "needs_clarification",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_open_invoices",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "business_erp_unavailable": {
+    "business": [
+      [
+        "customer_outstanding",
+        "UNAVAILABLE",
+        "ERP_UNAVAILABLE",
+        2
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 1,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "business_missing_customer": {
+    "business": [
+      [
+        "customer_outstanding",
+        "NOT_FOUND",
+        "NO_MATCH",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "business_pending_bill": {
+    "business": [
+      [
+        "customer_open_invoices",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_open_invoices",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "business_sales_today": {
+    "business": [
+      [
+        "daily_sales",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.daily_sales",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "business_unauthorized": {
+    "business": [],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "error",
+        "authorization"
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "business_warehouse_stock": {
+    "business": [
+      [
+        "product_stock",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 3,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.product_stock",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "followup_business_to_business": {
+    "business": [
+      [
+        "daily_sales",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.daily_sales",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "followup_business_to_general": {
+    "business": [],
+    "decision": {
+      "domain": "general",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "general",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "followup_general_to_business": {
+    "business": [
+      [
+        "customer_open_invoices",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_open_invoices",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "followup_overdue": {
+    "business": [
+      [
+        "customer_open_invoices",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_open_invoices",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "general_agentic_ai": {
+    "business": [],
+    "decision": {
+      "domain": "general",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "general",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "general_langgraph": {
+    "business": [],
+    "decision": {
+      "domain": "general",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "general",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "general_list_vs_tuple": {
+    "business": [],
+    "decision": {
+      "domain": "general",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "general",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "multi_automatic_purchase": {
+    "business": [],
+    "decision": {
+      "domain": null,
+      "outcome": "UNSUPPORTED_CAPABILITY",
+      "reason": "reserved_domain"
+    },
+    "domain": "purchase",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "finalization:ok"
+    ],
+    "status": "unsupported",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "multi_low_stock_and_po": {
+    "business": [
+      [
+        "low_stock_products",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "partial_route"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.low_stock_products",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "multi_report_and_send": {
+    "business": [],
+    "decision": {
+      "domain": null,
+      "outcome": "CLARIFY",
+      "reason": "send_not_available"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "finalization:ok"
+    ],
+    "status": "needs_clarification",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "multi_whatsapp_reminder": {
+    "business": [],
+    "decision": {
+      "domain": null,
+      "outcome": "UNSUPPORTED_CAPABILITY",
+      "reason": "not_available"
+    },
+    "domain": "unsupported",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "finalization:ok"
+    ],
+    "status": "unsupported",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "reliability_checkpoint_serialization_rejected": {
+    "business": [],
+    "decision": null,
+    "domain": null,
+    "erp_reads": 0,
+    "error_category": "serialization",
+    "error_code": "CHECKPOINT_SERIALIZATION_FAILED",
+    "llm_calls": [],
+    "retries": 0,
+    "stages": [],
+    "status": "failed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "reliability_erp_read_timeout": {
+    "business": [
+      [
+        "customer_outstanding",
+        "UNAVAILABLE",
+        "ERP_TIMEOUT",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [
+      "business_read"
+    ],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "reliability_malformed_planner_output": {
+    "business": [],
+    "decision": null,
+    "domain": null,
+    "erp_reads": 0,
+    "error_category": "model",
+    "error_code": "LLM_OUTPUT_ERROR",
+    "llm_calls": [
+      [
+        "planner",
+        "error"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:failed",
+      "error_handler:ok"
+    ],
+    "status": "failed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "reliability_malformed_supervisor_classification": {
+    "business": [],
+    "decision": {
+      "domain": null,
+      "outcome": "UNSUPPORTED_CAPABILITY",
+      "reason": "invalid_domain"
+    },
+    "domain": "invalid",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "finalization:ok"
+    ],
+    "status": "unsupported",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "reliability_model_unavailable": {
+    "business": [],
+    "decision": null,
+    "domain": null,
+    "erp_reads": 0,
+    "error_category": "retryable_dependency",
+    "error_code": "LLM_UNAVAILABLE",
+    "llm_calls": [
+      [
+        "planner",
+        "error"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:failed",
+      "error_handler:ok"
+    ],
+    "status": "failed",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "reliability_permanent_dependency": {
+    "business": [
+      [
+        "customer_outstanding",
+        "UNAVAILABLE",
+        "ERP_UNAVAILABLE",
+        2
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 1,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "reliability_rule_not_verified": {
+    "business": [
+      [
+        "customer_open_invoices",
+        "UNAVAILABLE",
+        "RULE_NOT_VERIFIED",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_open_invoices",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "reliability_timeout_swallowed": {
+    "business": [
+      [
+        "customer_outstanding",
+        "UNAVAILABLE",
+        "ERP_TIMEOUT",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [
+      "business_read"
+    ],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "reliability_timeout_swallowed_repeatedly": {
+    "business": [
+      [
+        "customer_outstanding",
+        "UNAVAILABLE",
+        "ERP_TIMEOUT",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [
+      "business_read",
+      "tool"
+    ],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "timeout",
+        "timeout"
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "reliability_transient_dependency": {
+    "business": [
+      [
+        "customer_outstanding",
+        "SUCCESS",
+        null,
+        2
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 3,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 1,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "safety_cross_tenant_reference": {
+    "business": [
+      [
+        "customer_outstanding",
+        "NOT_FOUND",
+        "NO_MATCH",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "safety_cross_tenant_result": {
+    "business": [
+      [
+        "customer_outstanding",
+        "DEPENDENCY_ERROR",
+        "TENANT_MISMATCH",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 1,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "safety_cross_warehouse_result": {
+    "business": [
+      [
+        "warehouse_stock",
+        "UNAUTHORIZED",
+        "WAREHOUSE_SCOPE_EMPTY",
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.warehouse_stock",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "safety_fake_domain_label": {
+    "business": [],
+    "decision": {
+      "domain": null,
+      "outcome": "UNSUPPORTED_CAPABILITY",
+      "reason": "invalid_domain"
+    },
+    "domain": "admin_console",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "finalization:ok"
+    ],
+    "status": "unsupported",
+    "timeouts": [],
+    "tools": [],
+    "verification": null,
+    "write_occurred": false
+  },
+  "safety_forbidden_sql_argument": {
+    "business": [],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "error",
+        "validation"
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "safety_forbidden_tenant_argument": {
+    "business": [],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "error",
+        "validation"
+      ]
+    ],
+    "verification": {
+      "grounded": true,
+      "replaced": false
+    },
+    "write_occurred": false
+  },
+  "safety_memory_contradicts_erp": {
+    "business": [
+      [
+        "customer_outstanding",
+        "SUCCESS",
+        null,
+        1
+      ]
+    ],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "partial_route"
+    },
+    "domain": "business",
+    "erp_reads": 2,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.customer_outstanding",
+        "ok",
+        null
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  },
+  "safety_unsupported_business_write": {
+    "business": [],
+    "decision": {
+      "domain": "business",
+      "outcome": "ROUTE",
+      "reason": "classified"
+    },
+    "domain": "business",
+    "erp_reads": 0,
+    "error_category": null,
+    "error_code": null,
+    "llm_calls": [
+      [
+        "planner",
+        "ok"
+      ],
+      [
+        "response",
+        "ok"
+      ]
+    ],
+    "retries": 0,
+    "stages": [
+      "planner:ok",
+      "supervisor:ok",
+      "domain:ok",
+      "response:ok",
+      "verification:ok",
+      "finalization:ok"
+    ],
+    "status": "completed",
+    "timeouts": [],
+    "tools": [
+      [
+        "business.create_purchase_order",
+        "error",
+        "tool"
+      ]
+    ],
+    "verification": {
+      "grounded": false,
+      "replaced": true
+    },
+    "write_occurred": false
+  }
+}

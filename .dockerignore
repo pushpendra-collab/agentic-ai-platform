@@ -1,0 +1,16 @@
+# Keep secrets, local state and tooling out of the build context (and so out of images).
+.env
+.env.*
+!.env.example
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/*.egg-info
+.git
+.mypy_cache
+.pytest_cache
+.ruff_cache
+tests
+docker
+deploy
+*.md

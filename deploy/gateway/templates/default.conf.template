@@ -1,0 +1,178 @@
+# Production gateway in front of the API (Phase 8, ADR-054). Deployment-neutral: the same
+# file works on a VM, in a container platform or as a Kubernetes sidecar/ingress replacement.
+#
+# Rendered by the nginx image at start (envsubst over ${GATEWAY_*} variables) into
+# /etc/nginx/conf.d/default.conf. Responsibilities:
+#
+#   * TLS termination (certificate + key mounted at /etc/nginx/certs; never in the repository)
+#   * HTTP -> HTTPS redirect (308 keeps the method and body)
+#   * forwarding with trusted X-Forwarded-* headers (the API trusts them only from the
+#     gateway's address: API_FORWARDED_ALLOW_IPS)
+#   * security headers, request size limit, header/body timeouts
+#   * per-client-address request and connection limits (unauthenticated traffic; the API
+#     adds per-caller limits after authentication, RATE_LIMIT_*)
+#   * long timeouts for agent turns only
+#
+# NOT here, by design: authentication, authorization, tenant or role decisions. The gateway
+# forwards the Authorization header untouched and never logs it; the API verifies every
+# token and permission itself (ADR-043). A request the gateway lets through is not trusted.
+#
+# Variables (docker-compose.yml `gateway` service; set them on any platform):
+#   GATEWAY_UPSTREAM                  host:port of the API (e.g. api:8000)
+#   GATEWAY_RESOLVER                  DNS server used to RE-resolve GATEWAY_UPSTREAM at run time
+#                                     (Docker: 127.0.0.11; Kubernetes: the cluster DNS address)
+#   GATEWAY_SERVER_NAME               public host name(s) (or _ for any)
+#   GATEWAY_HTTPS_PORT                public HTTPS port used in redirects (443 in production)
+#   GATEWAY_REQUESTS_PER_SECOND       sustained requests per client address
+#   GATEWAY_BURST                     extra requests allowed in a burst
+#   GATEWAY_TURNS_PER_MINUTE          agent-turn POSTs per client address
+#   GATEWAY_MAX_CONNECTIONS_PER_IP    concurrent connections per client address
+#   GATEWAY_TURN_TIMEOUT_SECONDS      read timeout for agent turns (> the turn's LLM budget)
+#   GATEWAY_INTERNAL_CIDR             network allowed to read /ready through the gateway
+
+# --- per-client-address limits (before authentication) -------------------------------------
+limit_req_zone $binary_remote_addr zone=per_ip:10m rate=${GATEWAY_REQUESTS_PER_SECOND}r/s;
+# Turns: only POSTs count (an empty key is not limited).
+map $request_method $turn_limit_key {
+    POST    $binary_remote_addr;
+    default "";
+}
+limit_req_zone $turn_limit_key zone=turns_per_ip:10m rate=${GATEWAY_TURNS_PER_MINUTE}r/m;
+limit_conn_zone $binary_remote_addr zone=conn_per_ip:10m;
+limit_req_status 429;
+limit_conn_status 429;
+limit_req_log_level warn;
+limit_conn_log_level warn;
+
+# --- logging: no query strings, no headers (tokens), no bodies --------------------------------
+log_format gateway_json escape=json
+    '{"time":"$time_iso8601","event":"gateway.request","request_id":"$request_id",'
+    '"api_request_id":"$upstream_http_x_request_id","remote_addr":"$remote_addr",'
+    '"method":"$request_method","path":"$uri","status":$status,'
+    '"bytes_sent":$body_bytes_sent,"duration_s":$request_time,'
+    '"upstream_s":"$upstream_response_time","upstream_status":"$upstream_status",'
+    '"tls":"$ssl_protocol"}';
+
+# The API's address changes whenever an orchestrator replaces it. Resolve the name at run
+# time (nginx >= 1.27.3 open source), not once at start: found by the Phase 8 restart drill,
+# where a recreated API got a new address and the gateway kept answering 503.
+resolver ${GATEWAY_RESOLVER} valid=10s ipv6=off;
+resolver_timeout 5s;
+
+# max_fails=0: one upstream name (a container, or a platform Service in front of the API
+# replicas) is never marked down by nginx. With the default (1 failure = down for 10 s), a
+# single refused connect while the API was starting turned into 10 s of instant 503s
+# (Phase 8 load re-run). Health is decided by /ready and the orchestrator.
+upstream agentic_api {
+    zone agentic_api 64k;
+    server ${GATEWAY_UPSTREAM} resolve max_fails=0;
+    keepalive 32;
+}
+
+server_tokens off;
+
+# --- plain HTTP: redirect only -------------------------------------------------------------
+server {
+    listen 8080;
+    listen [::]:8080;
+    server_name ${GATEWAY_SERVER_NAME};
+    access_log /dev/stdout gateway_json;
+
+    location = /gateway-health {
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+    location / {
+        return 308 https://$host:${GATEWAY_HTTPS_PORT}$request_uri;
+    }
+}
+
+# --- HTTPS ----------------------------------------------------------------------------------
+server {
+    listen 8443 ssl;
+    listen [::]:8443 ssl;
+    http2 on;
+    server_name ${GATEWAY_SERVER_NAME};
+    access_log /dev/stdout gateway_json;
+
+    # Certificate and key are mounted (secret manager / cert-manager / ACME client).
+    ssl_certificate     /etc/nginx/certs/tls.crt;
+    ssl_certificate_key /etc/nginx/certs/tls.key;
+    # Mozilla "intermediate" profile.
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:TLS:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # Request size and slow-client protection. Keep client_max_body_size equal to
+    # API_MAX_BODY_BYTES (1 MiB default); the API enforces its own limit as well.
+    client_max_body_size 1m;
+    client_body_timeout 15s;
+    client_header_timeout 15s;
+    # Bearer tokens can be several KB.
+    large_client_header_buffers 4 16k;
+    keepalive_timeout 30s;
+    send_timeout 30s;
+
+    limit_conn conn_per_ip ${GATEWAY_MAX_CONNECTIONS_PER_IP};
+    limit_req zone=per_ip burst=${GATEWAY_BURST} nodelay;
+
+    error_page 429 = @rate_limited;
+    error_page 413 = @too_large;
+    error_page 502 503 = @unavailable;
+    error_page 504 = @timeout;
+
+    include /etc/nginx/snippets/security_headers.conf;
+
+    # Agent turns: the only long-running requests (they wait for the LLM).
+    # POST /api/v1/agent/turn, POST /api/v1/conversations,
+    # POST /api/v1/conversations/{id}/messages, POST /api/v1/conversations/{id}/resume
+    location ~ ^/api/v1/(agent/turn|conversations(/[A-Za-z0-9_.:-]+/(messages|resume))?)$ {
+        limit_req zone=per_ip burst=${GATEWAY_BURST} nodelay;
+        limit_req zone=turns_per_ip burst=5 nodelay;
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_read_timeout ${GATEWAY_TURN_TIMEOUT_SECONDS}s;
+        proxy_send_timeout 30s;
+    }
+
+    # Readiness reveals dependency state: internal callers only. Orchestrators should
+    # probe the API container directly (GET /ready on port 8000).
+    location = /ready {
+        allow 127.0.0.1;
+        allow ${GATEWAY_INTERNAL_CIDR};
+        deny all;
+        include /etc/nginx/snippets/proxy.conf;
+    }
+
+    location / {
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+    }
+
+    # --- gateway-generated errors use the API's error envelope ------------------------------
+    location @rate_limited {
+        include /etc/nginx/snippets/security_headers.conf;
+        add_header Retry-After 1 always;
+        default_type application/json;
+        return 429 '{"error":{"code":"RATE_LIMITED","message":"Too many requests. Please wait and try again.","retryable":true,"request_id":"$request_id"}}';
+    }
+    location @too_large {
+        include /etc/nginx/snippets/security_headers.conf;
+        default_type application/json;
+        return 413 '{"error":{"code":"REQUEST_TOO_LARGE","message":"The request body is too large.","retryable":false,"request_id":"$request_id"}}';
+    }
+    location @unavailable {
+        include /etc/nginx/snippets/security_headers.conf;
+        add_header Retry-After 2 always;
+        default_type application/json;
+        return 503 '{"error":{"code":"SERVICE_UNAVAILABLE","message":"The service is temporarily unavailable. Please try again.","retryable":true,"request_id":"$request_id"}}';
+    }
+    location @timeout {
+        include /etc/nginx/snippets/security_headers.conf;
+        default_type application/json;
+        return 504 '{"error":{"code":"GATEWAY_TIMEOUT","message":"The request took too long. If you sent an idempotency key, retry with the same key.","retryable":true,"request_id":"$request_id"}}';
+    }
+}
